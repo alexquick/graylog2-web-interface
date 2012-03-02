@@ -4,12 +4,12 @@ gem 'rack', '~> 1.3.5'
 gem 'rake', '~> 0.9.2'
 gem 'rails', '~> 3.1.3'
 gem 'json', '~> 1.5.1'
-gem 'chronic', '~> 0.3.0'
+gem 'chronic', '~> 0.6.7'
 gem 'pony', '~> 1.1'  # unusual version number
 gem 'graylog2-declarative_authorization', '~> 0.5.2', :require => 'declarative_authorization'
 gem 'hoptoad_notifier', '~> 2.4.9'
 gem 'rpm_contrib', '~> 2.1.1'
-gem 'mongoid', '2.3.3'
+gem 'mongoid', '2.4.5'
 gem "tire", "~> 0.3.12"
 gem 'bson', "~> 1.3.1"
 gem 'bson_ext', "~> 1.3.1", :platforms => :ruby
