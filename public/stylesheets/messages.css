@@ -32,6 +32,19 @@
   background-color: #ffdf93;
 }
 
+.message-row.level-warn{
+  background-color: #FFFF99;
+}
+
+.message-row.level-error{
+  background-color: #FF6633;
+}
+
+.message-row.level-alert, .message-row.level-emerg, .message-row.level-crit{
+  background-color: #CC0000;
+  color: white;
+}
+
 #messages-quickfilter-graph {
   width: 100%;
   height: 200px;
