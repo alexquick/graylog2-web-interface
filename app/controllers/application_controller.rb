@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery
   helper Authorization::AuthorizationHelper
-
+  @@api_auth_only = []
   before_filter :login_required, :clear_terms_cache
 
   rescue_from "Mongo::ConnectionFailure" do
@@ -33,6 +33,14 @@ class ApplicationController < ActionController::Base
     return tmp.strftime(::Configuration.date_format)
   end
 
+  def self.api_auth(*actions)
+    @@api_auth_only = actions
+  end
+
+  def api_auth_only(action)
+    return @@api_auth_only.include?(action.to_sym)
+  end
+
   private
 
   def logged_in?
@@ -42,14 +50,20 @@ class ApplicationController < ActionController::Base
     return false
   end
 
+  def api_login
+    logger.info("using api login")
+    key = params[:api_key]
+    return nil unless key
+    return User.find_by_key(key)
+  end
+
   def login_required
     if  request.format.json? then
-      return true if logged_in?
-      if user = authenticate_with_http_basic { |u, p| User.authenticate(u, p) }
-        current_user = user
-        return true
-      else
-        return request_http_basic_authentication
+      return true if logged_in? and not api_auth_only(action_name)
+      @current_user = api_login() || false
+      if !logged_in?
+        render :json => {"error", "unauthorized"}, :status=>401
+        return false
       end
     end
     if !logged_in?
