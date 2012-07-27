@@ -26,9 +26,14 @@
     <%= javascript_include_tag("jquery.flot.selection.min") %>
     <%= javascript_include_tag("jquery.flot.resize.min") %>
   <% end %>
+  <% if @load_messages %>
+    <%= javascript_include_tag("messages.js") %>
+  <% end %>
   <%= javascript_include_tag "backtotop" if @use_backtotop %>
   <%= javascript_include_tag "application" %>
-  <%= javascript_include_tag "shell" if @has_shell %>
+  <% if @has_shell %>
+    <%= javascript_include_tag "jquery.graylog2shell.js" %>
+  <% end %>
   <%= javascript_include_tag "realtime" if @has_realtime %>
   <%= javascript_include_tag "rails" %>
 </head>
@@ -41,7 +46,8 @@
   <div id="back-to-top">Back to top</div>
 
   <div id="current-throughputs">
-    <span class="health-throughput-current"><%= (ServerValue.throughput[:current].to_i)/5.to_i %></span> msgs / sec
+    <span class="health-throughput-current"><%= (Cluster.throughput)/5.to_i %></span> msgs / sec
+    &nbsp; [ <%= Cluster.active_nodes.count %>n ]
   </div>
   <script type="text/javascript">
     $("#current-throughputs").bind("click", function() {
@@ -82,13 +88,17 @@
 
   <% if @has_shell %>
     <div id="shell-container">
-      <ul id="shell">
-        <li>
+      <div id="shell">
+        <div id="shell-oldinput-container">
+
+        </div>
+        <div>
           <span class="shell-prompt"><%= current_user.login %> #</span>
-          <input id="shell-command-input" class="shell-command" type="text" spellcheck="false"></input>
-        </li>
-      </ul>
+          <input id="shell-command-input" class="shell-command" type="text" spellcheck="false">
+        </div>
+      </div>
     </div>
+    <%= javascript_tag("$('#shell-container').shell();") %>
   <% end %>
  <% end %>
 
@@ -124,10 +134,22 @@
 
   <br style="clear: both;" /><br />
   
-  <% if ServerValue.ping < 65.seconds.ago %>
+  <% if Cluster.no_active_nodes? %>
     <div id="server-not-running" class="notification">
-      <span class="notification-title">Warning!</span> It seems like your Graylog2 server is not running.
+      <span class="notification-title">Warning!</span> It seems like you have no active Graylog2 node running.
     </div>
+  <% else %>
+    <% if Cluster.multiple_masters? %>
+      <div id="server-not-running" class="notification">
+        <span class="notification-title">Warning!</span> It seems like you have multiple Graylog2 master nodes running.
+      </div>
+    <% end %>
+    
+    <% if Cluster.no_masters? %>
+      <div id="server-not-running" class="notification">
+        <span class="notification-title">Warning!</span> It seems like you have no Graylog2 master nodes running. (all non-master)
+      </div>
+    <% end %>
   <% end %>
   
   <% unless flash[:notice].blank? %>

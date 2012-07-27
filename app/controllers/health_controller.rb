@@ -2,14 +2,12 @@ class HealthController < ApplicationController
   filter_access_to :index
 
   def index
-    @load_flot = true
+    # Delete outdated server values from instances not running anymore.
+    ServerValue.delete_outdated
   end
 
   def currentthroughput
-    render :js => { :count => ServerValue.throughput[:current] }.to_json
+    render :js => { :count => Cluster.throughput }.to_json
   end
-  
-  def currentmqsize
-    render :js => { :count => ServerValue.message_queue_current_size }.to_json
-  end
+
 end
