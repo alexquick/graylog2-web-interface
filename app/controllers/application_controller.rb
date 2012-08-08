@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   helper Authorization::AuthorizationHelper
   @@api_auth_only = []
   before_filter :login_required, :clear_terms_cache
-
+  after_filter :set_headers
   rescue_from "Mongo::ConnectionFailure" do
       render_custom_error_page("mongo_connectionfailure") and return
   end
@@ -73,6 +73,12 @@ class ApplicationController < ActionController::Base
       return true
     end
     return false
+  end
+
+  def set_headers
+    if request.format.json? then
+      response.headers["Access-Control-Allow-Origin"] =  "*"
+    end
   end
 
   def not_found

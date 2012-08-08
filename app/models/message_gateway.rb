@@ -24,7 +24,7 @@ end
 class MessageGateway
   include Tire::Model::Search
   include Mongoid::Document
-
+  Tire.configure { logger 'elasticsearch.log' }
   # used if not set in config
   DEFAULT_INDEX_NAME = "graylog2"
   DEFAULT_RECENT_INDEX_NAME = "graylog2_recent"
@@ -108,7 +108,6 @@ class MessageGateway
     else
       options = pagination_options(page).merge(@default_query_options)
     end
-
     r = search(options) do
       query do
         boolean do
