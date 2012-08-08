@@ -288,7 +288,7 @@ $(document).ready(function() {
     }, 5000);
 });
 
-functon buildHostCssId(id) {
+function buildHostCssId(id) {
   return "visuals-spread-hosts-" + id.replace(/=/g, '');
 };
 
