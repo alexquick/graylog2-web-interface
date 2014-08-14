@@ -138,7 +138,7 @@ public class RedirectAuthenticator extends Authenticator {
         String[] credString = null;
         try {
             decodedAuth = Base64.decode(authToken);
-            credString = new String(decodedAuth, "UTF-8").split(":");
+            credString = new String(decodedAuth, "UTF-8").split(":", 2);
         } catch (IOException e) {
             log.error("Unable to decode basic auth information: ", e);
             return null;
